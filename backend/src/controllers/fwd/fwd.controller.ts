@@ -37,8 +37,16 @@ export const premiumCalculation = async (
         .status(404)
         .json({ success: false, data: null, error: "No calculation found" });
       return;
+    } else {
+      const resultInsertData = await fwdService.insertDataFwd(results);
+      if (!resultInsertData) {
+        res
+          .status(500)
+          .json({ success: false, data: null, error: "Failed to insert" });
+      } else {
+        res.status(200).json({ success: true, data: results });
+      }
     }
-    res.status(200).json({ success: true, data: results });
   } catch (error) {
     const err = error as Error;
     res.status(500).json({ success: false, data: null, error: err.message });

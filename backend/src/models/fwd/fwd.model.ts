@@ -5,6 +5,8 @@ import {
   PremiumCalculationResponse,
   GetProductsResponse,
 } from "../../types/fwd.types";
+import db from "../../database/database";
+
 dotenv.config();
 
 const API_ENDPOINT = process.env.API_ENDPOINT;
@@ -33,7 +35,7 @@ const fwdService = {
         data,
         {
           headers: {
-            "x-api-key": API_KEY, 
+            "x-api-key": API_KEY,
           },
         }
       );
@@ -42,6 +44,31 @@ const fwdService = {
       const err = error as Error;
       console.error("Error:", err.message);
       throw err;
+    }
+  },
+
+  insertDataFwd: async (data: PremiumCalculationResponse) => {
+    try {
+      const query = `
+        INSERT INTO premium_calculation
+        (plan_code, base_sum_assured, base_annual_premium, modal_premium, product_term, premium_paying_term, payment_frequency_cd, created_at)
+        VALUES(?, ?, ?, ?, ?, ?, ?, NOW());
+      `;
+      const params = [
+        data.planCode,
+        data.baseSumAssured,
+        data.baseAnnualPremium,
+        data.modalPremium,
+        data.productTerm,
+        data.premiumPayingTerm,
+        data.paymentFrequencyCd,
+      ];
+
+      const [result] = await db.query(query, params);
+      return result;
+    } catch (error) {
+      console.error("Error Insert Data Fwd:", (error as Error).message);
+      throw error;
     }
   },
 };

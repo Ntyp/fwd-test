@@ -24,9 +24,12 @@ import {
 } from "@mui/material";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
+import config from "../../config";
 
 function ProductList() {
   const dispatch = useDispatch();
+  // const API_URL = import.meta.env.REACT_APP_API_URL;
+
   const { products, loading, error } = useSelector((state) => state.product);
   const isFetched = useRef(false);
 
@@ -82,7 +85,7 @@ function ProductList() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8888/api/premiumCalculation",
+        `${config.API_URL}/premiumCalculation`,
         requestData
       );
       setCalculationResult(response.data.data);

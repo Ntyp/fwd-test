@@ -1,4 +1,5 @@
 import express from "express";
+import db from "./database/database";
 const cors = require("cors");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -12,6 +13,15 @@ app.use(morgan("dev"));
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(cors());
 app.use(express.json());
+
+db.getConnection()
+  .then((connection) => {
+    console.log("Database Connected!!");
+    connection.release();
+  })
+  .catch((err) => {
+    console.error("Database Connection Error:", err.message);
+  });
 
 app.use("/api", apiRoutes);
 
